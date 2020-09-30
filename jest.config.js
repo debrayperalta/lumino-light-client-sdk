@@ -5,5 +5,11 @@ module.exports = {
   coverageDirectory: "coverage",
   coveragePathIgnorePatterns: ["/node_modules/"],
   moduleDirectories: ["src", "node_modules"],
-  moduleFileExtensions: ["js", "json"],
+  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
+  globals: {
+    "ts-jest": {
+      useBabelrc: true,
+      tsConfigFile: "tsconfig.jest.json",
+    },
+  },
 };

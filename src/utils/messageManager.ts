@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 import {
   MessageType,
   MessageKeyForOrder,
-  LIGHT_MESSAGE_TYPE,
   PAYMENT_SUCCESSFUL,
 } from "../config/messagesConstants";
 import {
@@ -56,21 +55,22 @@ import {
   getPaymentByIdAndState,
   isPaymentCompleteOrPending,
 } from "../store/functions/payments";
-import { chkSum } from "../utils/functions";
+import { chkSum } from "./functions";
 import { settleChannel } from "../store/actions/settle";
+import { MessageEnvelope, EnvelopeStateFlow } from "../types/messages";
 
 /**
  *
  * @param {*} messages The messages to process
  */
-export const messageManager = (messages = []) => {
+export const messageManager = (messages: MessageEnvelope[] = []) => {
   // We filter out only payment messages for this flow
 
   const paymentMessages = [];
   const nonPaymentMessages = [];
   if (!Array.isArray(messages)) return;
   messages.forEach(m => {
-    if (m.message_type === LIGHT_MESSAGE_TYPE.PAYMENT_OK_FLOW)
+    if (m.message_type === EnvelopeStateFlow.Successful)
       return paymentMessages.push(m);
     return nonPaymentMessages.push(m);
   });
@@ -99,7 +99,7 @@ const manageNonPaymentMessages = (messages = []) => {
 
   messages.forEach(({ message_content: msg }) => {
     const { payment_id } = msg;
-    let payment = getPayment(payment_id);
+    const payment = getPayment(payment_id);
 
     switch (msg.message.type) {
       case MessageType.LOCK_EXPIRED: {
@@ -325,9 +325,9 @@ const manageLockedTransfer = (message, payment, messageKey) => {
 
   if (payment && payment.failureReason) {
     store.dispatch(
-      putDelivered(msg, payment, message.message_order + 1, PAYMENT_SUCCESSFUL)
+      putDelivered(msg, payment, message.message_order + 1, true)
     );
-    return store.dispatch(putProcessed(msg, payment, 3, PAYMENT_SUCCESSFUL));
+    return store.dispatch(putProcessed(msg, payment, 3, true));
   }
 
   // Validate signature
@@ -506,7 +506,7 @@ const manageSecretRequest = (msg, payment, messageKey) => {
   }
   if (!payment.isReceived) store.dispatch(putRevealSecret(payment));
   if (payment.isReceived)
-    return store.dispatch(putSecretRequest(msg[messageKey], payment, true));
+    return store.dispatch(putSecretRequest(msg[messageKey], payment));
 };
 
 /**
@@ -557,7 +557,7 @@ const manageRevealSecret = (msg, payment, messageKey) => {
     );
     store.dispatch(putDelivered(payment.messages[7].message, payment, 8));
     store.dispatch(
-      putRevealSecret(payment, msg[messageKey].message_identifier, 9, true)
+      putRevealSecret(payment, msg[messageKey].message_identifier)
     );
   }
 };

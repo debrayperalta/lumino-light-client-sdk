@@ -1,11 +1,22 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const gulp = require("gulp");
 const eslint = require("gulp-eslint");
 const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
+const ts = require("gulp-typescript");
 const jsdoc = require("gulp-jsdoc3");
 const connect = require("gulp-connect");
 const webpack = require("webpack");
 const path = require("path");
+
+const tsSrc = [
+  "src/**/*.ts",
+  "src/**/*.js",
+  "!./node_modules/**",
+  "!./typings/**",
+  "!./vscode/**",
+  "!./public/**",
+];
 
 gulp.task("default", () => {
   gulp.start("lint", "babel", "doc");
@@ -18,29 +29,20 @@ gulp.task("lint", () => {
     .pipe(eslint.format());
 });
 
-gulp.task("watch", () => {
-  gulp.watch(["src/**/*.js"], gulp.series("babel"));
+gulp.task("ts", done => {
+  const tsProject = ts.createProject("tsconfig.json");
+  gulp
+    .src(tsSrc)
+    .pipe(sourcemaps.init())
+    .pipe(tsProject())
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest("dist"))
+    .end(done());
 });
 
-gulp.task("babel", done => {
-  gulp
-    .src("src/**/*.js")
-    .pipe(sourcemaps.init())
-    .pipe(
-      babel({
-        presets: ["@babel/env"],
-        plugins: [
-          "@babel/plugin-proposal-object-rest-spread",
-          "@babel/plugin-transform-runtime",
-          "@babel/plugin-transform-modules-commonjs",
-          "@babel/plugin-syntax-dynamic-import",
-          "@babel/plugin-syntax-optional-chaining",
-        ],
-      })
-    )
-    .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("dist"));
-  done();
+gulp.task("watch", () => {
+  gulp.series("ts-babel");
+  gulp.watch(["src/**/*.js"], gulp.series("ts"));
 });
 
 gulp.task("build", done => {

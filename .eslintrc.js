@@ -5,8 +5,12 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: "eslint:recommended",
-  parser: "@babel/eslint-parser",
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+  ],
+  parser: "@typescript-eslint/parser",
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
