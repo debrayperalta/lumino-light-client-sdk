@@ -12,8 +12,24 @@
     "declarationDir": ".",
     "preserveConstEnums": true,
     "declaration": true,
-    "baseUrl": "./src",
-    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
+    },
+    "outDir": "./dist"
   },
-  "exclude": [".vscode", "node_modules", "typings", "public", "test", "__mocks__", "examples", "dist", "coverage", "gulpfile.js", "jest.config.js", "sdkexample.js"]
+  "exclude": [
+    ".vscode",
+    "node_modules",
+    "typings",
+    "public",
+    "test",
+    "__mocks__",
+    "examples",
+    "dist",
+    "coverage",
+    "gulpfile.js",
+    "jest.config.js",
+    "sdkexample.js"
+  ]
 }

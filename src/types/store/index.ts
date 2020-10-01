@@ -1,7 +1,11 @@
-type StorageImplementation = {
-  saveLuminoData: (data: DefaultStore) => void;
-  getLuminoData: () => DefaultStore;
-};
+class StorageImplementation {
+  saveLuminoData: SaveLuminoData;
+  getLuminoData: GetLuminoData;
+}
+
+type SaveLuminoData = (data: DefaultStore) => void;
+
+type GetLuminoData = () => DefaultStore;
 
 type DefaultStore = {
   channelReducer: Record<string, unknown>;
@@ -18,4 +22,10 @@ type LuminoHandler = {
   offChainSign: (data: unknown) => string;
 };
 
-export { StorageImplementation, DefaultStore, LuminoHandler };
+export {
+  StorageImplementation,
+  DefaultStore,
+  LuminoHandler,
+  GetLuminoData,
+  SaveLuminoData,
+};
