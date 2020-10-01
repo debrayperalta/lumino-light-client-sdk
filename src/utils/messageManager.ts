@@ -1,9 +1,5 @@
 import { ethers } from "ethers";
-import {
-  MessageType,
-  MessageKeyForOrder,
-  PAYMENT_SUCCESSFUL,
-} from "../config/messagesConstants";
+import { MessageKeyForOrder } from "../config/messagesConstants";
 import {
   FAILURE_REASONS,
   PENDING_PAYMENT,
@@ -57,17 +53,23 @@ import {
 } from "../store/functions/payments";
 import { chkSum } from "./functions";
 import { settleChannel } from "../store/actions/settle";
-import { MessageEnvelope, EnvelopeStateFlow } from "../types/messages";
+import {
+  MessageEnvelope,
+  EnvelopeStateFlow,
+  MessageType,
+  MessageBase,
+  MessageLockExpired,
+} from "../types/messages";
 
 /**
  *
  * @param {*} messages The messages to process
  */
-export const messageManager = (messages: MessageEnvelope[] = []) => {
+export const messageManager = (messages: MessageEnvelope[] = []): void => {
   // We filter out only payment messages for this flow
 
-  const paymentMessages = [];
-  const nonPaymentMessages = [];
+  const paymentMessages: MessageEnvelope[] = [];
+  const nonPaymentMessages: MessageEnvelope[] = [];
   if (!Array.isArray(messages)) return;
   messages.forEach(m => {
     if (m.message_type === EnvelopeStateFlow.Successful)
@@ -94,7 +96,7 @@ const getPayment = paymentId => {
   return paymentData;
 };
 
-const manageNonPaymentMessages = (messages = []) => {
+const manageNonPaymentMessages = (messages: MessageEnvelope[] = []): void => {
   const messagesToProcessLast = [];
 
   messages.forEach(({ message_content: msg }) => {
@@ -103,7 +105,7 @@ const manageNonPaymentMessages = (messages = []) => {
 
     switch (msg.message.type) {
       case MessageType.LOCK_EXPIRED: {
-        return manageLockExpired(msg, payment);
+        return manageLockExpired(msg , payment);
       }
       case MessageType.DELIVERED:
       case MessageType.PROCESSED: {
@@ -234,7 +236,7 @@ const managePaymentMessages = (messages = []) => {
   }
 };
 
-const manageLockExpired = (msgData, payment) => {
+const manageLockExpired = (msgData: MessageLockExpired, payment) => {
   const store = Store.getStore();
   const { dispatch } = store;
   const { message, payment_id, message_order } = msgData;
@@ -324,9 +326,7 @@ const manageLockedTransfer = (message, payment, messageKey) => {
   const msg = message[messageKey];
 
   if (payment && payment.failureReason) {
-    store.dispatch(
-      putDelivered(msg, payment, message.message_order + 1, true)
-    );
+    store.dispatch(putDelivered(msg, payment, message.message_order + 1, true));
     return store.dispatch(putProcessed(msg, payment, 3, true));
   }
 
@@ -406,7 +406,7 @@ const manageLockedTransfer = (message, payment, messageKey) => {
  * @param {*} payment The payment associated to the message
  * @param {*} messageKey The data key for accessing the message
  */
-const manageDeliveredAndProcessed = (msg, payment, messageKey) => {
+const manageDeliveredAndProcessed = (msg: MessageBase, payment, messageKey) => {
   const { failureReason } = payment;
   const { message_order } = msg;
   let previousMessage = null;
@@ -568,7 +568,7 @@ const manageRevealSecret = (msg, payment, messageKey) => {
  * @param {*} payment The payment associated to the message
  * @param {*} messageKey The data key for accessing the message
  */
-const manageSecret = (msg, payment, messageKey) => {
+const manageSecret = (msg, payment, messageKey: string) : void => {
   //  Is already processed?
   if (payment.messages[msg.message_order]) return null;
 

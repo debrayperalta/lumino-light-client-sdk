@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware, bindActionCreators } from "redux";
+import { createStore, applyMiddleware, bindActionCreators, Store } from "redux";
 import thunkMiddleware from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { createEpicMiddleware } from "redux-observable";
@@ -12,8 +12,10 @@ import {
   START_NOTIFICATIONS_POLLING,
 } from "./actions/types";
 import client from "../apiRest";
+import { DefaultStore, LuminoHandler, StorageImplementation } from "../types/store";
 
 let store = null;
+
 const defaultStore = {
   channelReducer: {},
   paymentIds: {},
@@ -23,10 +25,13 @@ const defaultStore = {
     failed: {},
   },
 };
+
 const defaultStorage = {
   getLuminoData: /* istanbul ignore next */ () => defaultStore,
-  saveLuminoData: /* istanbul ignore next */ () => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  saveLuminoData: /* istanbul ignore next */ (data: DefaultStore) => undefined,
 };
+
 let storage = defaultStorage;
 
 const setApiKeyFromStore = (store, configApiKey) => {
@@ -37,7 +42,11 @@ const setApiKeyFromStore = (store, configApiKey) => {
   if (api_key) client.defaults.headers = { "x-api-key": api_key };
 };
 
-const initStore = async (storageImpl, luminoHandler, configApiKey) => {
+const initStore = async (
+  storageImpl: StorageImplementation,
+  luminoHandler: LuminoHandler,
+  configApiKey: string
+) : Promise<Store> => {
   if (storageImpl) storage = storageImpl;
   const dataFromStorage = await storage.getLuminoData();
   let data = {};
@@ -61,6 +70,7 @@ const initStore = async (storageImpl, luminoHandler, configApiKey) => {
       )
     )
   );
+
   setApiKeyFromStore(store, configApiKey);
   observableMiddleware.run(epics);
   sagaMiddleware.run(rootSaga);
@@ -77,14 +87,14 @@ const initStore = async (storageImpl, luminoHandler, configApiKey) => {
   return store;
 };
 
-const bindActions = (actions, dispatch) =>
+const bindActions = (actions, dispatch): void =>
   bindActionCreators(actions, dispatch);
 
 const getStore = () => store;
 
-const destroyStore = () => (store = null);
+const destroyStore = (): void => (store = null);
 
-const stopAllPollings = actions => {
+const stopAllPollings = (actions) : void => {
   store.dispatch(actions.stopAllPolling());
 };
 
