@@ -6,10 +6,8 @@ module.exports = {
   coveragePathIgnorePatterns: ["/node_modules/"],
   moduleDirectories: ["src", "node_modules"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  globals: {
-    "ts-jest": {
-      useBabelrc: true,
-      tsConfigFile: "tsconfig.jest.json",
-    },
+  transform: {
+    "^.+\\.jsx?$": "babel-jest", // Adding this line solved the issue
+    "^.+\\.tsx?$": "ts-jest",
   },
 };

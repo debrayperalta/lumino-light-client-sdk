@@ -1,24 +1,18 @@
 {
-    "compilerOptions": {
-        "target": "ES5",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "module": "commonjs",
-        "noImplicitAny": false,
-        "removeComments": true,
-        "allowJs": true,
-        "sourceMap": true,
-        "preserveConstEnums": true,
-        "declaration": true,
-        "baseUrl": "./src",
-        "outDir": "dist",
-    },
+  "compilerOptions": {
+    "target": "ES5",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "removeComments": true,
+    "allowJs": true,
+    "sourceMap": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "baseUrl": "./src",
+    "outDir": "dist"
+  },
 
-    "exclude": [
-        ".vscode",
-        "node_modules",
-        "typings",
-        "public",
-        "test"
-    ]
+  "exclude": [".vscode", "node_modules", "typings", "public"]
 }
