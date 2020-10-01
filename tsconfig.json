@@ -9,10 +9,11 @@
     "allowJs": true,
     "checkJs": false,
     "sourceMap": true,
+    "declarationDir": ".",
     "preserveConstEnums": true,
     "declaration": true,
     "baseUrl": "./src",
     "outDir": "./dist",
   },
-  "exclude": [".vscode", "node_modules", "typings", "public", "test", "__mocks__", "examples", "dist", "coverage"]
+  "exclude": [".vscode", "node_modules", "typings", "public", "test", "__mocks__", "examples", "dist", "coverage", "gulpfile.js", "jest.config.js", "sdkexample.js"]
 }

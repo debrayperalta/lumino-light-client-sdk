@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const gulp = require("gulp");
 const eslint = require("gulp-eslint");
-const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
 const jsdoc = require("gulp-jsdoc3");
 const connect = require("gulp-connect");
@@ -9,7 +8,7 @@ const webpack = require("webpack");
 const path = require("path");
 
 const ts = require("gulp-typescript");
-const tsProject = ts.createProject("tsconfig.json");
+const tsProject = ts.createProject("tsconfig.json",{declaration: true});
 
 gulp.task("default", () => {
   gulp.start("lint", "babel", "doc");
@@ -25,14 +24,17 @@ gulp.task("lint", () => {
 gulp.task("ts", () => {
   return tsProject
     .src()
+    .pipe(sourcemaps.init())
     .pipe(tsProject())
-    .js.pipe(gulp.dest("dist"));
+    .js
+    .pipe(sourcemaps.write(".")).
+    
+    pipe(gulp.dest("dist"));
 
 });
 
 gulp.task("watch", () => {
-  gulp.series("ts-babel");
-  gulp.watch(["src/**/*.js"], gulp.series("ts"));
+  gulp.watch(["src/**/*.js", "src/**/*.ts"], gulp.series("ts"));
 });
 
 gulp.task("build", done => {

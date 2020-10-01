@@ -7,7 +7,7 @@
     "test": "jest",
     "start": "node index.js",
     "dev": "npx gulp watch",
-    "build": "npx gulp babel",
+    "build": "npx gulp ts",
     "prettier": "prettier --print-width 80 --end-of-line lf --trailing-comma es5 --write 'src/**/*.js'",
     "lint": "eslint 'src/**' -c './.eslintrc.js' --ignore-path './.eslintignore' --fix",
     "prepublishOnly": "npm run build"
