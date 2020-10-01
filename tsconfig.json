@@ -7,12 +7,12 @@
     "noImplicitAny": false,
     "removeComments": true,
     "allowJs": true,
+    "checkJs": false,
     "sourceMap": true,
     "preserveConstEnums": true,
     "declaration": true,
     "baseUrl": "./src",
-    "outDir": "dist"
+    "outDir": "./dist",
   },
-
-  "exclude": [".vscode", "node_modules", "typings", "public"]
+  "exclude": [".vscode", "node_modules", "typings", "public", "test", "__mocks__", "examples", "dist", "coverage"]
 }

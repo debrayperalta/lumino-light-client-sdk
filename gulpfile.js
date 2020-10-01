@@ -3,20 +3,13 @@ const gulp = require("gulp");
 const eslint = require("gulp-eslint");
 const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
-const ts = require("gulp-typescript");
 const jsdoc = require("gulp-jsdoc3");
 const connect = require("gulp-connect");
 const webpack = require("webpack");
 const path = require("path");
 
-const tsSrc = [
-  "src/**/*.ts",
-  "src/**/*.js",
-  "!./node_modules/**",
-  "!./typings/**",
-  "!./vscode/**",
-  "!./public/**",
-];
+const ts = require("gulp-typescript");
+const tsProject = ts.createProject("tsconfig.json");
 
 gulp.task("default", () => {
   gulp.start("lint", "babel", "doc");
@@ -29,15 +22,12 @@ gulp.task("lint", () => {
     .pipe(eslint.format());
 });
 
-gulp.task("ts", done => {
-  const tsProject = ts.createProject("tsconfig.json");
-  gulp
-    .src(tsSrc)
-    .pipe(sourcemaps.init())
+gulp.task("ts", () => {
+  return tsProject
+    .src()
     .pipe(tsProject())
-    .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest("dist"))
-    .end(done());
+    .js.pipe(gulp.dest("dist"));
+
 });
 
 gulp.task("watch", () => {
