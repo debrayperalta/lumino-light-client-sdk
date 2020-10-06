@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { AddressZero } from "ethers/constants";
-import { NON_CLOSED_STATES } from "../config/channelStates";
+import { NON_OPENABLE_STATES } from "../config/channelStates";
 
 const getGreater = (n1, n2) => (n1 > n2 ? n1 : n2);
 
@@ -49,7 +49,7 @@ export const findNonClosedChannelWithPartner = (
       return false;
     })
     // We then filter for the non closed states
-    .find(({ sdk_status }) => NON_CLOSED_STATES[sdk_status]);
+    .find(({ sdk_status }) => NON_OPENABLE_STATES[sdk_status]);
   return channel;
 };
 
